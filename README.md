@@ -19,7 +19,7 @@ tags: [Sommersemester2026, Softwareentwicklung, Übung05]
 
 -->
 
-[![LiaScript Course](https://raw.githubusercontent.com/LiaScript/LiaScript/master/badges/course.svg)](https://liascript.github.io/course/?https://raw.githubusercontent.com/Ifi-Softwareentwicklung-SoSe2026/exercise_05/refs/heads/main/README.md)
+[![LiaScript Course](https://raw.githubusercontent.com/LiaScript/LiaScript/master/badges/course.svg)](https://liascript.github.io/course/?https://raw.githubusercontent.com/Ifi-Softwareentwicklung-SoSe2026/exercise-05-NJSofficial1/refs/heads/main/README.md)
 
 # Aufgabe 05
 
@@ -136,4 +136,70 @@ Kevin ersetzt den folgenden Platzhalter mit einem LiaScript-kompatiblen PlantUML
 - [plantUml Editor](https://pantuml.com)
 - paste and copy your code! Mit Reloads verlieren Sie Ihre Eingaben, daher vorher sichern!
 
-<!-- kevin:uml-diagram -->
+<!-- kevin-uml:start -->
+```text @plantUML
+@startuml
+skinparam classAttributeIconSize 0
+
+class Gruppe {
+    - name: String
+    - teams: List<Mannschaft>
+    + addTeam(team: Mannschaft): void
+}
+
+class Mannschaft {
+    - name: String
+    + getName(): String
+}
+
+class Spiel {
+    - spielId: String
+    - datum: DateTime
+    - heimMannschaft: Mannschaft
+    - auswaertsMannschaft: Mannschaft
+    - ergebnis: String
+    - quoten: List<Wettquote>
+    + setErgebnis(score: String): void
+    + addQuote(quote: Wettquote): void
+}
+
+class Wettquote {
+    - wettTyp: String
+    - quote: double
+    + getWettTyp(): String
+    + getQuote(): double
+}
+
+class Benutzer {
+    - name: String
+    - guthaben: double
+    + updateGuthaben(amount: double): void
+}
+
+class Wette {
+    - wettTyp: String
+    - quote: double
+    - einsatz: double
+    - istAusgewertet: boolean
+    + auswerten(ergebnis: String): double
+}
+
+class PersistenceManager {
+    + saveTournament(data: TournamentData): void
+    + loadTournament(): TournamentData
+    + saveBets(bets: List<Wette>): void
+    + loadBets(): List<Wette>
+}
+
+Gruppe "1" *-- "*" Mannschaft : enthält
+Spiel "*" o-- "2" Mannschaft : beteiligt
+Spiel "1" *-- "*" Wettquote : bietet
+Wette "*" o-- "1" Benutzer : platziert von
+Wette "*" o-- "1" Spiel : bezieht sich auf
+
+note right of PersistenceManager : Verantwortlich für JSON-Speicherung
+
+@enduml
+```
+@plantUML.eval(png)
+<!-- kevin-uml:end -->
