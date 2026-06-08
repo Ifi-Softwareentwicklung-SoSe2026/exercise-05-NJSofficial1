@@ -147,14 +147,15 @@ class Turnier {
     - viertelfinale: Viertelfinale
     - halbfinale: Halbfinale
     - finale: Finale
-    - spielUmDrittenPlatz: Spiel
-    + getSpielById(id: String): Spiel
+    - dritterPlatzSpiel: Spiel
+    + save(): void
+    + load(): void
 }
 
 class Gruppe {
     - name: String
     - teams: List<Mannschaft>
-    + addTeam(team: Mannschaft): void
+    - spiele: List<Spiel>
 }
 
 class Mannschaft {
@@ -165,12 +166,31 @@ class Mannschaft {
 class Spiel {
     - spielId: String
     - datum: DateTime
-    - heimMannschaft: Mannschaft
-    - auswaertsMannschaft: Mannschaft
+    - uhrzeit: Time
+    - heimTeam: Mannschaft
+    - auswaertsTeam: Mannschaft
     - ergebnis: String
     - quoten: List<Wettquote>
-    + setErgebnis(score: String): void
-    + addQuote(quote: Wettquote): void
+    + setErgebnis(toreHeim: int, toreAuswaerts: int): void
+}
+
+class Wettquote {
+    - typ: String
+    - quote: double
+}
+
+class Benutzer {
+    - name: String
+    - guthaben: double
+    + updateGuthaben(betrag: double): void
+}
+
+class Wette {
+    - typ: String
+    - quote: double
+    - einsatz: double
+    - istAusgewertet: boolean
+    + auswerten(ergebnis: String): double
 }
 
 class Viertelfinale {
@@ -185,52 +205,25 @@ class Finale {
     - spiel: Spiel
 }
 
-class Wettquote {
-    - wettTyp: String
-    - quote: double
-    + getWettTyp(): String
-    + getQuote(): double
-}
+Turnier "1" *-- "*" Gruppe
+Turnier "1" *-- "1" Viertelfinale
+Turnier "1" *-- "1" Halbfinale
+Turnier "1" *-- "1" Finale
+Turnier "1" *-- "1" Spiel : dritter Platz
 
-class Benutzer {
-    - name: String
-    - guthaben: double
-    + updateGuthaben(amount: double): void
-}
+Gruppe "1" *-- "*" Mannschaft
+Gruppe "1" *-- "*" Spiel
 
-class Wette {
-    - wettTyp: String
-    - quote: double
-    - einsatz: double
-    - istAusgewertet: boolean
-    + auswerten(ergebnis: String): double
-}
+Spiel "1" o-- "1" Mannschaft : heim
+Spiel "1" o-- "1" Mannschaft : auswärts
+Spiel "1" *-- "*" Wettquote
 
-class PersistenceManager {
-    + saveTournament(turnier: Turnier): void
-    + loadTournament(): Turnier
-    + saveBets(bets: List<Wette>): void
-    + loadBets(): List<Wette>
-}
+Wette "*" -- "1" Benutzer : platziert von
+Wette "*" -- "1" Spiel : bezieht sich auf
 
-Turnier "1" *-- "*" Gruppe : enthält
-Turnier "1" *-- "1" Viertelfinale : hat
-Turnier "1" *-- "1" Halbfinale : hat
-Turnier "1" *-- "1" Finale : hat
-Turnier "1" *-- "1" Spiel : Spiel um 3. Platz
-
-Gruppe "1" *-- "*" Mannschaft : enthält
-Spiel "*" o-- "2" Mannschaft : beteiligt
-Spiel "1" *-- "*" Wettquote : bietet
-
-Viertelfinale "1" *-- "*" Spiel : besteht aus
-Halbfinale "1" *-- "*" Spiel : besteht aus
-Finale "1" *-- "1" Spiel : besteht aus
-
-Wette "*" o-- "1" Benutzer : platziert von
-Wette "*" o-- "1" Spiel : bezieht sich auf
-
-note right of PersistenceManager : Verantwortlich für JSON-Speicherung
+Viertelfinale "1" *-- "*" Spiel
+Halbfinale "1" *-- "*" Spiel
+Finale "1" *-- "1" Spiel
 
 @enduml
 ```
