@@ -19,7 +19,7 @@ tags: [Sommersemester2026, Softwareentwicklung, Übung05]
 
 -->
 
-[![LiaScript Course](https://raw.githubusercontent.com/LiaScript/LiaScript/master/badges/course.svg)](https://liascript.github.io/course/?https://raw.githubusercontent.com/Ifi-Softwareentwicklung-SoSe2026/exercise_05/refs/heads/main/README.md)
+[![LiaScript Course](https://raw.githubusercontent.com/LiaScript/LiaScript/master/badges/course.svg)](https://liascript.github.io/course/?https://raw.githubusercontent.com/Ifi-Softwareentwicklung-SoSe2026/exercise-05-NJSofficial1/refs/heads/main/README.md)
 
 # Aufgabe 05
 
@@ -136,4 +136,99 @@ Kevin ersetzt den folgenden Platzhalter mit einem LiaScript-kompatiblen PlantUML
 - [plantUml Editor](https://pantuml.com)
 - paste and copy your code! Mit Reloads verlieren Sie Ihre Eingaben, daher vorher sichern!
 
-<!-- kevin:uml-diagram -->
+
+<!-- kevin-uml:start -->
+```text @plantUML
+@startuml
+skinparam classAttributeIconSize 0
+
+class Turnier {
+    - name: String
+    - gruppen: List<Gruppe>
+    - viertelfinale: Viertelfinale
+    - halbfinale: Halbfinale
+    - finale: Finale
+    - dritterPlatzSpiel: Spiel
+    + save(): void
+    + load(): void
+}
+
+class Gruppe {
+    - name: String
+    - teams: List<Mannschaft>
+    - spiele: List<Spiel>
+}
+
+class Mannschaft {
+    - name: String
+    + getName(): String
+}
+
+class Spiel {
+    - spielId: String
+    - datum: DateTime
+    - uhrzeit: Time
+    - heimTeam: Mannschaft
+    - auswaertsTeam: Mannschaft
+    - ergebnis: String
+    - quoten: List<Wettquote>
+    + setErgebnis(toreHeim: int, toreAuswaerts: int): void
+}
+
+class Wettquote {
+    - typ: String
+    - quote: double
+}
+
+class Benutzer {
+    - name: String
+    - guthaben: double
+    + updateGuthaben(betrag: double): void
+}
+
+class Wette {
+    - typ: String
+    - quote: double
+    - einsatz: double
+    - istAusgewertet: boolean
+    + auswerten(ergebnis: String): double
+}
+
+class Viertelfinale {
+    - spiele: List<Spiel>
+}
+
+class Halbfinale {
+    - spiele: List<Spiel>
+}
+
+class Finale {
+    - spiel: Spiel
+}
+
+Turnier "1" *-- "*" Gruppe
+Turnier "1" *-- "1" Viertelfinale
+Turnier "1" *-- "1" Halbfinale
+Turnier "1" *-- "1" Finale
+Turnier "1" *-- "1" Spiel : dritter Platz
+
+Gruppe "1" *-- "*" Mannschaft
+Gruppe "1" *-- "*" Spiel
+
+Spiel "1" o-- "1" Mannschaft : heim
+Spiel "1" o-- "1" Mannschaft : auswärts
+Spiel "1" *-- "*" Wettquote
+
+Wette "*" -- "1" Benutzer : platziert von
+Wette "*" -- "1" Spiel : bezieht sich auf
+
+Viertelfinale "1" *-- "*" Spiel
+Halbfinale "1" *-- "*" Spiel
+Finale "1" *-- "1" Spiel
+
+@enduml
+```
+@plantUML.eval(png)
+<!-- kevin-uml:end -->
+
+
