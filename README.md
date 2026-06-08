@@ -141,6 +141,16 @@ Kevin ersetzt den folgenden Platzhalter mit einem LiaScript-kompatiblen PlantUML
 @startuml
 skinparam classAttributeIconSize 0
 
+class Turnier {
+    - name: String
+    - gruppen: List<Gruppe>
+    - viertelfinale: Viertelfinale
+    - halbfinale: Halbfinale
+    - finale: Finale
+    - spielUmDrittenPlatz: Spiel
+    + getSpielById(id: String): Spiel
+}
+
 class Gruppe {
     - name: String
     - teams: List<Mannschaft>
@@ -161,6 +171,18 @@ class Spiel {
     - quoten: List<Wettquote>
     + setErgebnis(score: String): void
     + addQuote(quote: Wettquote): void
+}
+
+class Viertelfinale {
+    - spiele: List<Spiel>
+}
+
+class Halbfinale {
+    - spiele: List<Spiel>
+}
+
+class Finale {
+    - spiel: Spiel
 }
 
 class Wettquote {
@@ -185,15 +207,26 @@ class Wette {
 }
 
 class PersistenceManager {
-    + saveTournament(data: TournamentData): void
-    + loadTournament(): TournamentData
+    + saveTournament(turnier: Turnier): void
+    + loadTournament(): Turnier
     + saveBets(bets: List<Wette>): void
     + loadBets(): List<Wette>
 }
 
+Turnier "1" *-- "*" Gruppe : enthält
+Turnier "1" *-- "1" Viertelfinale : hat
+Turnier "1" *-- "1" Halbfinale : hat
+Turnier "1" *-- "1" Finale : hat
+Turnier "1" *-- "1" Spiel : Spiel um 3. Platz
+
 Gruppe "1" *-- "*" Mannschaft : enthält
 Spiel "*" o-- "2" Mannschaft : beteiligt
 Spiel "1" *-- "*" Wettquote : bietet
+
+Viertelfinale "1" *-- "*" Spiel : besteht aus
+Halbfinale "1" *-- "*" Spiel : besteht aus
+Finale "1" *-- "1" Spiel : besteht aus
+
 Wette "*" o-- "1" Benutzer : platziert von
 Wette "*" o-- "1" Spiel : bezieht sich auf
 
