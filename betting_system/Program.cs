@@ -22,33 +22,51 @@ weltmeisterschaft.save();
 */
 
 
-
-
-if (args.Length == 0)
+if (args.Length > 0)
 {
-    Console.WriteLine("Fehler: Bitte gib einen Befehl an ('new' oder 'print').");
-    return; // Programm beenden
+    string command = args[0].ToLower();
+
+    if (command == "new")
+    {
+        string json = File.ReadAllText("Startdaten.json");
+        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+        var data = JsonSerializer.Deserialize<Turnier>(json, options);
+        
+        if (data != null) {
+            data.save();
+            Console.WriteLine("Turnier wurde erfolgreich initialisiert.");
+        }
+    }
+    else if (command == "print")
+    {
+        Turnier wm = new Turnier("Weltmeisterschaft 2026");
+        wm.load();
+        
+        Console.WriteLine($"Turnier: {wm.Name}");
+        foreach (var gruppe in wm.Gruppen)
+        {
+            Console.WriteLine($"Gruppe: {gruppe.Name}");
+            foreach (var spiel in gruppe.Spiele)
+            {
+                string heim = spiel.HeimMannschaft?.Name ?? "Unbekannt";
+                string ausw = spiel.AuswaertsMannschaft?.Name ?? "Unbekannt";
+                Console.WriteLine($"ID {spiel.SpielId}: {heim} vs {ausw}");
+            }
+        }
+    }
 }
-
-// Den Befehl aus dem ersten Argument lesen
-string command = args[0].ToLower();
-
-if (command == "new")
+else
 {
+    // falls keine Argumente vorhanden, dann beide Befehle nacheinander ausführen
+    
     string json = File.ReadAllText("Startdaten.json");
     var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
     var data = JsonSerializer.Deserialize<Turnier>(json, options);
-    
-    if (data != null) {
-        data.save();
-        Console.WriteLine("Turnier wurde erfolgreich initialisiert.");
-    }
-}
-else if (command == "print")
-{
+    if (data != null) data.save();
+    Console.WriteLine("Keine Parameter genannt - führe beide Befehle nacheinander aus.");
+
     Turnier wm = new Turnier("Weltmeisterschaft 2026");
     wm.load();
-    
     Console.WriteLine($"Turnier: {wm.Name}");
     foreach (var gruppe in wm.Gruppen)
     {
