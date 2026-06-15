@@ -25,24 +25,21 @@ public class Turnier(string name)
         File.WriteAllText(dateipfad, json);
     }
      
-    public void load()
+    public void Initialisieren()
     {
-        if (File.Exists(dateipfad))
-        {
-            string json = File.ReadAllText(dateipfad);
-            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-            var geladenerInhalt = JsonSerializer.Deserialize<Turnier>(json, options);
+        this.Gruppen.Clear();
+        
+        Mannschaft mexiko = new Mannschaft("Mexiko");
+        Mannschaft suedafrika = new Mannschaft("Südafrika");
 
-            if (geladenerInhalt != null)
-            {
-                this.Name = geladenerInhalt.Name;
-                this.Gruppen = geladenerInhalt.Gruppen;
-                this.Viertelfinale = geladenerInhalt.Viertelfinale;
-                this.Halbfinale = geladenerInhalt.Halbfinale;
-                this.Finale = geladenerInhalt.Finale;
-                this.DritterPlatzSpiel = geladenerInhalt.DritterPlatzSpiel;
-            }
-        }
+        Gruppe gruppeA = new Gruppe("Gruppe A");
+        gruppeA.Teams.Add(mexiko);
+        gruppeA.Teams.Add(suedafrika);
+
+        Spiel eroffnungsspiel = new Spiel(1, DateTime.Now, TimeSpan.Parse("20:00"), mexiko, suedafrika);
+        gruppeA.Spiele.Add(eroffnungsspiel);
+
+        this.Gruppen.Add(gruppeA);
     }
     
 }

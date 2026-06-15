@@ -4,36 +4,20 @@ using System.Text.Json;
 using Spiellogik;
 using Wettlogik;
 
-/* Testdatensatz
-// Testdaten
-Turnier weltmeisterschaft = new Turnier("Weltmeisterschaft 2026");
-Mannschaft deutschland = new Mannschaft("deutschland");
-Mannschaft brasilien = new Mannschaft("brasilien");
 
-Gruppe gruppeA = new Gruppe("Gruppe A");
-gruppeA.Teams.Add(deutschland);
-gruppeA.Teams.Add(brasilien);
 
-Spiel eroffnungsspiel = new Spiel(1, DateTime.Now, TimeSpan.Parse("20:00"), deutschland, brasilien);
-gruppeA.Spiele.Add(eroffnungsspiel);
 
-weltmeisterschaft.Gruppen.Add(gruppeA);
 
-weltmeisterschaft.save();
-*/
+using Wettlogik;
 
+Turnier wm = new Turnier("Weltmeisterschaft 2026");
 
 if (args.Length == 0)
 {
     Console.WriteLine("Keine Parameter genannt - führe beide Befehle nacheinander aus.");
     
-    string json = File.ReadAllText("Startdaten.json");
-    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-    var data = JsonSerializer.Deserialize<Turnier>(json, options);
-    data.save();
-
-    Turnier wm = new Turnier("Weltmeisterschaft 2026");
-    wm.load();
+    wm.Initialisieren();
+    
     Console.WriteLine($"Turnier: {wm.Name}");
     foreach (var gruppe in wm.Gruppen)
     {
@@ -52,15 +36,14 @@ else
 
     if (command == "new")
     {
-        string json = File.ReadAllText("Startdaten.json");
-        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-        var data = JsonSerializer.Deserialize<Turnier>(json, options);
-        data.save();
+        wm.Initialisieren();
+        wm.save();
+        Console.WriteLine("Initialisierung erfolgreich");
     }
     else if (command == "print")
     {
-        Turnier wm = new Turnier("Weltmeisterschaft 2026");
-        wm.load();
+        wm.Initialisieren();
+        
         Console.WriteLine($"Turnier: {wm.Name}");
         foreach (var gruppe in wm.Gruppen)
         {
