@@ -35,12 +35,12 @@ public class Turnier(string name)
 
             if (geladenerInhalt != null)
             {
-            this.Name = geladenerInhalt.Name;
-            this.Gruppen = geladenerInhalt.Gruppen;
-            this.Viertelfinale = geladenerInhalt.Viertelfinale;
-            this.Halbfinale = geladenerInhalt.Halbfinale;
-            this.Finale = geladenerInhalt.Finale;
-            this.DritterPlatzSpiel = geladenerInhalt.DritterPlatzSpiel;
+                this.Name = geladenerInhalt.Name;
+                this.Gruppen = geladenerInhalt.Gruppen;
+                this.Viertelfinale = geladenerInhalt.Viertelfinale;
+                this.Halbfinale = geladenerInhalt.Halbfinale;
+                this.Finale = geladenerInhalt.Finale;
+                this.DritterPlatzSpiel = geladenerInhalt.DritterPlatzSpiel;
             }
         }
     }

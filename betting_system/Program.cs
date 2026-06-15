@@ -1,4 +1,5 @@
-﻿using System.Security.Principal;
+﻿using System.Data;
+using System.Security.Principal;
 using System.Text.Json;
 using Spiellogik;
 using Wettlogik;
@@ -22,48 +23,14 @@ weltmeisterschaft.save();
 */
 
 
-if (args.Length > 0)
+if (args.Length == 0)
 {
-    string command = args[0].ToLower();
-
-    if (command == "new")
-    {
-        string json = File.ReadAllText("Startdaten.json");
-        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-        var data = JsonSerializer.Deserialize<Turnier>(json, options);
-        
-        if (data != null) {
-            data.save();
-            Console.WriteLine("Turnier wurde erfolgreich initialisiert.");
-        }
-    }
-    else if (command == "print")
-    {
-        Turnier wm = new Turnier("Weltmeisterschaft 2026");
-        wm.load();
-        
-        Console.WriteLine($"Turnier: {wm.Name}");
-        foreach (var gruppe in wm.Gruppen)
-        {
-            Console.WriteLine($"Gruppe: {gruppe.Name}");
-            foreach (var spiel in gruppe.Spiele)
-            {
-                string heim = spiel.HeimMannschaft?.Name ?? "Unbekannt";
-                string ausw = spiel.AuswaertsMannschaft?.Name ?? "Unbekannt";
-                Console.WriteLine($"ID {spiel.SpielId}: {heim} vs {ausw}");
-            }
-        }
-    }
-}
-else
-{
-    // falls keine Argumente vorhanden, dann beide Befehle nacheinander ausführen
+    Console.WriteLine("Keine Parameter genannt - führe beide Befehle nacheinander aus.");
     
     string json = File.ReadAllText("Startdaten.json");
     var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
     var data = JsonSerializer.Deserialize<Turnier>(json, options);
-    if (data != null) data.save();
-    Console.WriteLine("Keine Parameter genannt - führe beide Befehle nacheinander aus.");
+    data.save();
 
     Turnier wm = new Turnier("Weltmeisterschaft 2026");
     wm.load();
@@ -77,5 +44,38 @@ else
             string ausw = spiel.AuswaertsMannschaft?.Name ?? "Unbekannt";
             Console.WriteLine($"ID {spiel.SpielId}: {heim} vs {ausw}");
         }
+    }
+}
+else
+{
+    string command = args[0].ToLower();
+
+    if (command == "new")
+    {
+        string json = File.ReadAllText("Startdaten.json");
+        var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+        var data = JsonSerializer.Deserialize<Turnier>(json, options);
+        data.save();
+    }
+    else if (command == "print")
+    {
+        Turnier wm = new Turnier("Weltmeisterschaft 2026");
+        wm.load();
+        Console.WriteLine($"Turnier: {wm.Name}");
+        foreach (var gruppe in wm.Gruppen)
+        {
+            Console.WriteLine($"Gruppe: {gruppe.Name}");
+            foreach (var spiel in gruppe.Spiele)
+            {
+                string heim = spiel.HeimMannschaft?.Name ?? "Unbekannt";
+                string ausw = spiel.AuswaertsMannschaft?.Name ?? "Unbekannt";
+                Console.WriteLine($"ID {spiel.SpielId}: {heim} vs {ausw}");
+            }
+        }
+    }
+    else
+    {
+        Console.WriteLine($"Fehler: Der Befehl '{command}' ist unbekannt.");
+        Console.WriteLine("Erlaubte Befehle sind 'new' oder 'print'.");
     }
 }
