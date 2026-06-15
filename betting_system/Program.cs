@@ -24,26 +24,40 @@ weltmeisterschaft.save();
 
 
 
-// ===== Initialisierung mit new =====
-string json = File.ReadAllText("Startdaten.json");
-var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
-var data = JsonSerializer.Deserialize<Turnier>(json, options);
-
-if(data != null) {
-    data.save();
-    Console.WriteLine("Turnier wurde initialisiert.");
+if (args.Length == 0)
+{
+    Console.WriteLine("Fehler: Bitte gib einen Befehl an ('new' oder 'print').");
+    return; // Programm beenden
 }
 
-// ===== Ausgabe mit new =====
-Turnier wm = new Turnier("Weltmeisterschaft 2026");
-wm.load();
+// Den Befehl aus dem ersten Argument lesen
+string command = args[0].ToLower();
 
-Console.WriteLine($"Turnier: {wm.Name}");
-foreach (var gruppe in wm.Gruppen)
+if (command == "new")
 {
-    Console.WriteLine($"Gruppe: {gruppe.Name}");
-    foreach (var spiel in gruppe.Spiele)
+    string json = File.ReadAllText("Startdaten.json");
+    var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+    var data = JsonSerializer.Deserialize<Turnier>(json, options);
+    
+    if (data != null) {
+        data.save();
+        Console.WriteLine("Turnier wurde erfolgreich initialisiert.");
+    }
+}
+else if (command == "print")
+{
+    Turnier wm = new Turnier("Weltmeisterschaft 2026");
+    wm.load();
+    
+    Console.WriteLine($"Turnier: {wm.Name}");
+    foreach (var gruppe in wm.Gruppen)
     {
-        Console.WriteLine($"ID {spiel.SpielId}: {spiel.HeimMannschaft?.Name ?? "Unbekannt"} vs {spiel.AuswaertsMannschaft?.Name ?? "Unbekannt"}");
+        Console.WriteLine($"Gruppe: {gruppe.Name}");
+        foreach (var spiel in gruppe.Spiele)
+        {
+            string heim = spiel.HeimMannschaft?.Name ?? "Unbekannt";
+            string ausw = spiel.AuswaertsMannschaft?.Name ?? "Unbekannt";
+            Console.WriteLine($"ID {spiel.SpielId}: {heim} vs {ausw}");
+        }
     }
 }
