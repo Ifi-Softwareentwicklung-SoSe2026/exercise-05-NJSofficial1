@@ -20,7 +20,6 @@ public class Turnier(string name)
 
     public void save()
     {
-        
         var json = JsonSerializer.Serialize(this, new JsonSerializerOptions { WriteIndented = true });
         File.WriteAllText(dateipfad, json);
     }
@@ -40,6 +39,30 @@ public class Turnier(string name)
         gruppeA.Spiele.Add(eroffnungsspiel);
 
         this.Gruppen.Add(gruppeA);
+    }
+
+    public void Load()
+    {
+        if (File.Exists(dateipfad))
+        {
+            string json = File.ReadAllText(dateipfad);
+            var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+            var geladenerInhalt = JsonSerializer.Deserialize<Turnier>(json, options);
+
+            if (geladenerInhalt != null)
+            {
+                this.Name = geladenerInhalt.Name;
+                this.Gruppen = geladenerInhalt.Gruppen;
+                this.Viertelfinale = geladenerInhalt.Viertelfinale;
+                this.Halbfinale = geladenerInhalt.Halbfinale;
+                this.Finale = geladenerInhalt.Finale;
+                this.DritterPlatzSpiel = geladenerInhalt.DritterPlatzSpiel;
+            }
+        }
+        else
+        {
+            Console.WriteLine("Die Datei 'Turnierdaten.json' wurde nicht gefunden.");
+        }
     }
     
 }

@@ -17,7 +17,9 @@ if (args.Length == 0)
     Console.WriteLine("Keine Parameter genannt - führe beide Befehle nacheinander aus.");
     
     wm.Initialisieren();
+    wm.save();
     
+    wm.Load();
     Console.WriteLine($"Turnier: {wm.Name}");
     foreach (var gruppe in wm.Gruppen)
     {
@@ -42,8 +44,7 @@ else
     }
     else if (command == "print")
     {
-        wm.Initialisieren();
-        
+        wm.Load();
         Console.WriteLine($"Turnier: {wm.Name}");
         foreach (var gruppe in wm.Gruppen)
         {
