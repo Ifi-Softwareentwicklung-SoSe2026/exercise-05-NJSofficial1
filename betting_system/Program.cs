@@ -24,81 +24,26 @@ weltmeisterschaft.save();
 
 
 
-if (args.Length > 0)
-{
-    string command = args[0].ToLower();
-    RunCommand(command);
-}
-else
-{
-    RunInteractiveMode();
+// ===== Initialisierung mit new =====
+string json = File.ReadAllText("Startdaten.json");
+var options = new JsonSerializerOptions { PropertyNameCaseInsensitive = true };
+var data = JsonSerializer.Deserialize<Turnier>(json, options);
+
+if(data != null) {
+    data.save();
+    Console.WriteLine("Turnier wurde initialisiert.");
 }
 
-static void RunInteractiveMode()
+// ===== Ausgabe mit new =====
+Turnier wm = new Turnier("Weltmeisterschaft 2026");
+wm.load();
+
+Console.WriteLine($"Turnier: {wm.Name}");
+foreach (var gruppe in wm.Gruppen)
 {
-    bool running = true;
-    while (running)
+    Console.WriteLine($"Gruppe: {gruppe.Name}");
+    foreach (var spiel in gruppe.Spiele)
     {
-        Console.WriteLine("\nWas möchtest du tun? (new/print/exit)");
-        string? input = Console.ReadLine()?.ToLower();
-
-        switch (input)
-        {
-            case "new": RunCommand("new"); break;
-            case "print": RunCommand("print"); break;
-            case "exit": running = false; break;
-            default: Console.WriteLine("Befehl nicht erkannt."); break;
-        }
-    }
-}
-
-static void RunCommand(string command)
-{
-    Turnier wm = new Turnier("Weltmeisterschaft 2026");
-
-    switch (command)
-    {
-        case "new":
-        try {
-            string json = File.ReadAllText("Startdaten.json");
-            
-            // keine Unterscheidung von Groß- und Kleinschreibung -> einfacheres Mapping aus der json
-            var options = new JsonSerializerOptions { 
-                PropertyNameCaseInsensitive = true 
-            };
-
-            // Versuch der Deserialisierung
-            var data = JsonSerializer.Deserialize<Turnier>(json, options);
-            
-            if(data != null) {
-                data.save();
-                Console.WriteLine("Turnier wurde aus den Daten initialisiert und gespeichert.");
-            }
-        } catch (JsonException ex) {
-            Console.WriteLine("Fehler: Das JSON-Format passt nicht zum Konstruktor der Klasse 'Spiel'.");
-            Console.WriteLine("Details: " + ex.Message);
-        }
-        break;
-
-        case "print":
-            wm.load();
-            Console.WriteLine($"Turnier: {wm.Name}");
-            foreach (var gruppe in wm.Gruppen)
-            {
-                Console.WriteLine($"Gruppe: {gruppe.Name}");
-                if (gruppe.Spiele != null) // Prüfen, ob die Liste der Gruppen existiert
-                {
-                    foreach (var spiel in gruppe.Spiele)
-                    {
-                        // Sicherer Zugriff: Wenn Heim/Auswärts null ist, wird "Unbekannt" als Platzhalter angezeigt
-                        // -> kein Zuweisungsfehler
-                        string heim = spiel.HeimMannschaft?.Name ?? "Unbekannt";
-                        string auswaerts = spiel.AuswaertsMannschaft?.Name ?? "Unbekannt";
-                        
-                        Console.WriteLine($"ID {spiel.SpielId}: {heim} vs {auswaerts}");
-                    }
-                }
-            }
-            break;
+        Console.WriteLine($"ID {spiel.SpielId}: {spiel.HeimMannschaft?.Name ?? "Unbekannt"} vs {spiel.AuswaertsMannschaft?.Name ?? "Unbekannt"}");
     }
 }
