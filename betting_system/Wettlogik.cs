@@ -1,6 +1,14 @@
+using System.Runtime.CompilerServices;
 using Spiellogik;
 
 namespace Wettlogik;
+
+public class Wettquote(int spielId, string typ, double quote)
+{
+    public int SpielId { get; set; } = spielId;
+    public string Typ { get; set; } = typ;
+    public double Quote { get; set; } = quote;
+}
 
 public class Wette(string typ, double quote, double einsatz, Benutzer benutzer, int spielId)
 {
@@ -12,11 +20,31 @@ public class Wette(string typ, double quote, double einsatz, Benutzer benutzer, 
     public int SpielId { get; set; } = spielId;
 }
 
-public class Wettquote(int spielId, string typ, double quote)
+public class QuotenManager
 {
-    public int SpielId { get; set; } = spielId;
-    public string Typ { get; set; } = typ;
-    public double Quote { get; set; } = quote;
+    private static List<Wettquote> _quote = new();
+
+    public static void SetQuote(int spielId, string typ, double wert)
+    {
+        // TODO: Finden einer einfacheren Lösung
+        var bestehendeQuote = _quoten.FirstOrDefault(q => q.SpielId == spielId && q.Typ.Equals(typ, Comparison.OrdinalIgnoreCase));
+
+        if(bestehendeQuote != null)
+        {
+            bestehendeQuote.Quote = wert;
+        }
+        else
+        {
+            _quoten.Add(new Wettquote(spielId, typ, wert));
+        }
+    }
+
+    public static void GetQuote(int spielId, string typ)
+    {
+        // TODO: Finden einer einfacheren Lösung
+        var quote = _quoten.FirstOrDefault(q => q.SpielId == spielId && q.Typ.Equals(typ, StringComparison.OrdinalIgnoreCase));
+        return quote?.Quote ?? 1.0; // 1.0 als Standardquote hinterlegt, falls keine explizit angegeben wird durch den Nutzer
+    }
 }
 
 public class Benutzer(string name, double guthaben)
@@ -29,3 +57,4 @@ public class Benutzer(string name, double guthaben)
         Guthaben += betrag;
     }
 }
+
