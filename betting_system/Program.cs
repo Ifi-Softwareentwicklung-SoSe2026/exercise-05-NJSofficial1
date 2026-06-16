@@ -10,10 +10,10 @@ if (args.Length == 0)
 {
     Console.WriteLine("Keine Parameter genannt - führe beide Befehle nacheinander aus.");
     New();
-    string[] testSetArgs = { "set", "1", "Siegwette", "2.5" };
+    string[] testSetArgs = { "set", "1" , "Siegwette", "2.5" };
     Set(testSetArgs);
-    string[] testGetArgs = { "get", "1", "Siegwette" };
-    Get();
+    string[] testGetArgs = { "get", "1" , "Siegwette" };
+    Get(testGetArgs);
     Print();
 }
 else
