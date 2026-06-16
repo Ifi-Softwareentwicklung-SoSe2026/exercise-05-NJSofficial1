@@ -42,6 +42,7 @@ else
             Console.WriteLine("Die umgesetzten Befehle lauten: 'new', 'print', 'set' und 'get'.");
             Console.WriteLine("Die Syntax bei 'set' erfolgt nach der Syntax set <spielid> <Wetttyp> <Wettquote>.");
             Console.WriteLine("Die Syntax bei 'get' erfolgt nach der Syntax get <spielid> <Wetttyp>.");
+            break;
     }
 }
 
