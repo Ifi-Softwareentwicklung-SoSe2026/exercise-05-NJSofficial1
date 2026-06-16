@@ -22,12 +22,12 @@ public class Wette(string typ, double quote, double einsatz, Benutzer benutzer, 
 
 public class QuotenManager
 {
-    private static List<Wettquote> _quote = new();
+    private static List<Wettquote> _quoten = new();
 
     public static void SetQuote(int spielId, string typ, double wert)
     {
-        // TODO: Finden einer einfacheren Lösung
-        var bestehendeQuote = _quoten.FirstOrDefault(q => q.SpielId == spielId && q.Typ.Equals(typ, Comparison.OrdinalIgnoreCase));
+        var bestehendeQuote = _quoten.Find(q => q.SpielId == spielId && 
+                                                q.Typ.Equals(typ, StringComparison.OrdinalIgnoreCase));
 
         if(bestehendeQuote != null)
         {
@@ -39,11 +39,21 @@ public class QuotenManager
         }
     }
 
-    public static void GetQuote(int spielId, string typ)
+    public static double GetQuote(int spielId, string typ)
     {
-        // TODO: Finden einer einfacheren Lösung
-        var quote = _quoten.FirstOrDefault(q => q.SpielId == spielId && q.Typ.Equals(typ, StringComparison.OrdinalIgnoreCase));
-        return quote?.Quote ?? 1.0; // 1.0 als Standardquote hinterlegt, falls keine explizit angegeben wird durch den Nutzer
+       var bestehendeQuote = _quoten.Find(q => q.SpielId == spielId && 
+                                                q.Typ.Equals(typ, StringComparison.OrdinalIgnoreCase));
+        return bestehendeQuote?.Quote ?? 1.0; // 1.0 als Standardquote hinterlegt, falls keine explizit angegeben wird durch den Nutzer
+    }
+
+    public static List<Wettquote> ExportiereQuoten()
+    {
+        return _quoten;
+    }
+
+    public static void ImportiereQuoten(List<Wettquote> geladeneQuoten)
+    {
+        _quoten = geladeneQuoten ?? new List<Wettquote>();
     }
 }
 
