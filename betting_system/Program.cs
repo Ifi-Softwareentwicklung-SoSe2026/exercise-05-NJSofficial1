@@ -4,12 +4,6 @@ using System.Text.Json;
 using Spiellogik;
 using Wettlogik;
 
-
-
-
-
-using Wettlogik;
-
 Turnier wm = new Turnier("Weltmeisterschaft 2026");
 
 if (args.Length == 0)
@@ -63,3 +57,4 @@ else
         Console.WriteLine("Erlaubte Befehle sind 'new' oder 'print'.");
     }
 }
+

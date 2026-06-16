@@ -2,31 +2,30 @@ using Spiellogik;
 
 namespace Wettlogik;
 
-public class Wette(string typ, double quote, double einsatz, Benutzer benutzer, Spiel spiel)
+public class Wette(string typ, double quote, double einsatz, Benutzer benutzer, int spielId)
 {
-    private string _typ = typ;
-    private double _quote = quote;
-    private double _einsatz = einsatz;
-    private bool _istAusgewertet;
-    private Benutzer _benutzer = benutzer;
-    private Spiel _spiel = spiel;
-
-    public double Auswerten(string ergebnis) => 0.0;
+    public string Typ { get; set; } = typ;
+    public double Quote { get; set; } = quote;
+    public double Einsatz { get; set; } = einsatz;
+    public bool IstAusgewertet { get; set; }
+    public Benutzer Benutzer { get; set; } = benutzer;
+    public int SpielId { get; set; } = spielId;
 }
 
-public class Wettquote(string typ, double quote)
+public class Wettquote(int spielId, string typ, double quote)
 {
-    private string _typ = typ;
-    private double _quote = quote;
+    public int SpielId { get; set; } = spielId;
+    public string Typ { get; set; } = typ;
+    public double Quote { get; set; } = quote;
 }
 
 public class Benutzer(string name, double guthaben)
 {
-    private string _name = name;
-    private double _guthaben = guthaben;
+    public string Name { get; set; } = name;
+    public double Guthaben { get; set; } = guthaben;
 
-    public void UpdateGuthaben(double amount)
+    public void UpdateGuthaben(double betrag)
     {
-        _guthaben += amount;
+        Guthaben += betrag;
     }
 }
