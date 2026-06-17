@@ -141,3 +141,22 @@ void Get(string[] args)
     Console.WriteLine($"Quote für Spiel ID {id} ({typ}): {quote}");
 }
 
+void bid(string [] args)
+{
+    if(args.Length < 5)
+    {
+        Console.WriteLine("Fehler: Unvollständige Parameter. Nutzung: dotnet run bid <player> <spielid> <Wetttyp> <amount>");
+        return;
+    }
+
+    // TODO: Parsen und Wertübergabe
+
+    // Laden der bestehenden Quoten des Turniers
+    wm.Load();
+
+    // Heraussuchen des Spiels mit der passenden Spiel-ID in allen Spielen aller Gruppen -> 
+    // Flattening der Liste mittels SelectMany
+    var spiel = wm.Gruppen.SelectMany(g => g.Spiele).FirstOrDefault(s => s.SpielId == id);
+
+
+}

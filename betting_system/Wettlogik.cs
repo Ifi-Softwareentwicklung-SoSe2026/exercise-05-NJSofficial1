@@ -57,6 +57,60 @@ public class QuotenManager
     }
 }
 
+public class WettManager()
+{
+    private List<Wette> _wetten = new();
+    private List<Benutzer> _benutzer = new();
+
+    public void PlatziereBenutzerwette(string spielername, int spielId, string wetttyp, double einsatz, double quote)
+    {
+        // Suchen des Benutzer unter Missachtung von Groß- und Kleinschreibung
+        var benutzer = _benutzer.Find(b => b.Name.Equals(spielername, StringComparison.OrdinalIgnoreCase));
+        if(benutzer == null)
+        {
+            // Falls der Nutzer noch nicht registriert worden ist, wird er ins System eingepflegt und erhält 100€ Startguthaben
+            benutzer = new Benutzer(spielername, 100.0);
+            _benutzer.Add(benutzer);
+        }
+
+        // Ausschluss des Kontoüberzugs ;-)
+        if (benutzer.Guthaben < einsatz)
+        {
+            Console.WriteLine($"Fehler: Es ist kein ausreichendes Kontingent vorhanden - {spielerName} hat nur {benutzer.Guthaben} €.");
+            return;
+        }
+
+        // Abzug der Wette vom Guthaben (mittels Update-Methode) und Registrierung der Wette
+        benutzer.UpdateGuthaben(-einsatz);
+        _wetten.Add(new Wette (wetttyp, quote, einsatz, benutzer, spielId));
+        Console.WriteLine($"Wette platziert: {spielerName} setzt {einsatz} € auf '{wetttyp}' (Quote: {quote}). Restguthaben: {benutzer.Guthaben} €")
+    }
+
+    public static void WerteWetteAus(int spielId, string ergebnis)
+    {
+        // Suchen aller noch nicht mit `result` ausgewerteten Wetten
+        var offeneWetten = _wetten.FindAll(w => w.SpielId == spielId && !w.IstAusgewertet);
+        if(offeneWetten.Count == 0) return;
+
+        var tore = ergebnis.Split(':');
+        // TODO: Vereinfachung
+        if (tore.Length != 2 || !int.TryParse(tore[0], out int heimTore) || !int.TryParse(tore[1], out int auswaertsTore))
+
+        foreach(var wette in offeneWetten)
+        {
+            wette.IstAusgewertet = true;
+            var b = _benutzer.Find(u => u.Name.Equals(wette.Benutzer.Name, StringComparison.OrdinalIgnoreCase));
+            if(b == null) continue;
+
+            // Siegwette <=> Heimteam gewinnt (als Vereinfachung)
+            bool hatGewonnen = wette.Typ.Equals("Siegwette", StringComparison.OrdinalIgnoreCase && heimTore > auswaertsTore);
+        }
+
+        
+
+    }
+}
+
 public class Benutzer(string name, double guthaben)
 {
     public string Name { get; set; } = name;
