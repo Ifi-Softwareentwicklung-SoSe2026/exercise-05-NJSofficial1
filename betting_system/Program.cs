@@ -15,6 +15,16 @@ if (args.Length == 0)
     string[] testGetArgs = { "get", "1" , "Siegwette" };
     Get(testGetArgs);
     Print();
+    string[] testBidArgs1 = { "bid", "Julian Nagelsmann", "1", "Siegwette", "3000000.0" };
+    bid(testBidArgs1);
+    
+    string[] testBidArgs2 = { "bid", "Manuel Neuer", "1", "Siegwette", "1" };
+    bid(testBidArgs2);
+    
+    string[] testResultArgs = { "result", "1", "2:1" };
+    result(testResultArgs);
+    
+    Print();
 }
 else
 {
@@ -40,6 +50,12 @@ else
             break;
         case "get":
             Get(args);
+            break;
+        case "bid":
+            bid(args);
+            break;
+        case "result":
+            result(args);
             break;
         default:
             Console.WriteLine($"Fehler: Der Befehl {command} ist nicht bekannt.");
@@ -141,3 +157,84 @@ void Get(string[] args)
     Console.WriteLine($"Quote für Spiel ID {id} ({typ}): {quote}");
 }
 
+void bid(string [] args)
+{
+    if(args.Length < 5)
+    {
+        Console.WriteLine("Fehler: Unvollständige Parameter. Nutzung: dotnet run bid <player> <spielid> <Wetttyp> <amount>");
+        return;
+    }
+
+    string player = args[1];
+    int id = int.Parse(args[2]);
+    string typ = args[3];
+    double amount = double.Parse(args[4], System.Globalization.CultureInfo.InvariantCulture);
+
+    // Laden der bestehenden Quoten des Turniers
+    wm.Load();
+
+    // Heraussuchen des Spiels mit der passenden Spiel-ID in allen Spielen aller Gruppen -> 
+    // Flattening der Liste mittels SelectMany
+    var spiel = wm.Gruppen.SelectMany(g => g.Spiele).FirstOrDefault(s => s.SpielId == id);
+    if (spiel == null)
+    {
+        Console.WriteLine($"Fehler: Spiel mit ID {id} wurde nicht gefunden.");
+        return;
+    }
+
+    // Ermitteln der Wettquote über den Quotenmanager
+    QuotenManager.ImportiereQuoten(spiel.Quoten);
+    double quote = QuotenManager.GetQuote(id, typ);
+
+    // Wettmanager-Zuweisung von Wette und Benutzer
+    WettManager.ImportiereWetten(wm.Wetten);
+    WettManager.ImportiereBenutzer(wm.Benutzer);
+
+    // Setzen der Wette durch den Wettmanager
+    WettManager.PlatziereBenutzerwette(player, id, typ, amount, quote);
+
+    wm.Wetten = WettManager.ExportiereWetten();
+    wm.Benutzer = WettManager.ExportiereBenutzer();
+    wm.save();
+
+
+}
+
+void result(string[] args)
+{
+    if (args.Length < 3)
+    {
+        Console.WriteLine("Fehler: Unvollständige Parameter. Nutzung: dotnet run result <spielid> <ToreHeim>:<ToreAuswärts>");
+        return;
+    }
+
+    int id = int.Parse(args[1]);
+    string ergebnis = args[2];
+
+    wm.Load();
+
+    var spiel = wm.Gruppen.SelectMany(g => g.Spiele).FirstOrDefault(s => s.SpielId == id);
+    if (spiel == null)
+    {
+        Console.WriteLine($"Fehler: Spiel mit ID {id} wurde nicht gefunden.");
+        return;
+    }
+
+    // Eintragen des Ergebnisses im Spiel
+    var tore = ergebnis.Split(':');
+    // TODO: Vereinfachen dieser Logik
+    if (tore is [var h, var a] && int.TryParse(h, out int tHeim) && int.TryParse(a, out int tAusw))
+    {
+        spiel.SetErgebnis(tHeim, tAusw);
+    }
+
+    // Übergabe der Parameter an den Wettmanager, Auswertung, Rückgabe der Ergebnisse
+    WettManager.ImportiereWetten(wm.Wetten);
+    WettManager.ImportiereBenutzer(wm.Benutzer);
+
+    WettManager.WerteWetteAus(id, ergebnis);
+
+    wm.Wetten = WettManager.ExportiereWetten();
+    wm.Benutzer = WettManager.ExportiereBenutzer();
+    wm.save();
+}

@@ -16,6 +16,8 @@ public class Turnier(string name)
     public Halbfinale Halbfinale {get; set;}
     public Finale Finale {get; set;}
     public Spiel DritterPlatzSpiel {get; set;}
+    public List<Wette> Wetten { get; set; } = new();
+    public List<Benutzer> Benutzer { get; set; } = new();
     private string dateipfad = @".\Turnierdaten.json"; 
 
     public void save()
@@ -57,6 +59,8 @@ public class Turnier(string name)
                 this.Halbfinale = geladenerInhalt.Halbfinale;
                 this.Finale = geladenerInhalt.Finale;
                 this.DritterPlatzSpiel = geladenerInhalt.DritterPlatzSpiel;
+                this.Wetten = geladenerInhalt.Wetten ?? new List<Wette>();
+                this.Benutzer = geladenerInhalt.Benutzer ?? new List<Benutzer>();
             }
         }
         else
@@ -100,9 +104,7 @@ public class Spiel
     public string Ergebnis { get; set; }
     public List<Wettquote> Quoten { get; set; } = new();
 
-    // Parameterloser Konstruktor für den Serializer
     public Spiel() { }
-
     // Konstruktor für die manuelle Erstellung mittels new aus den Startdaten heraus
     public Spiel(int spielId, DateTime datum, TimeSpan uhrzeit, Mannschaft heim, Mannschaft auswaerts)
     {
