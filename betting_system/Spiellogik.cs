@@ -16,6 +16,8 @@ public class Turnier(string name)
     public Halbfinale Halbfinale {get; set;}
     public Finale Finale {get; set;}
     public Spiel DritterPlatzSpiel {get; set;}
+    public List<Wette> Wetten { get; set; } = new();
+    public List<Benutzer> Benutzer { get; set; } = new();
     private string dateipfad = @".\Turnierdaten.json"; 
 
     public void save()
@@ -57,6 +59,8 @@ public class Turnier(string name)
                 this.Halbfinale = geladenerInhalt.Halbfinale;
                 this.Finale = geladenerInhalt.Finale;
                 this.DritterPlatzSpiel = geladenerInhalt.DritterPlatzSpiel;
+                this.Wetten = geladenerInhalt.Wetten ?? new List<Wette>();
+                this.Benutzer = geladenerInhalt.Benutzer ?? new List<Benutzer>();
             }
         }
         else

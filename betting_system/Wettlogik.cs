@@ -57,12 +57,12 @@ public class QuotenManager
     }
 }
 
-public class WettManager()
+public class WettManager
 {
-    private List<Wette> _wetten = new();
-    private List<Benutzer> _benutzer = new();
+    private static List<Wette> _wetten = new();
+    private static List<Benutzer> _benutzer = new();
 
-    public void PlatziereBenutzerwette(string spielername, int spielId, string wetttyp, double einsatz, double quote)
+    public static void PlatziereBenutzerwette(string spielername, int spielId, string wetttyp, double einsatz, double quote)
     {
         // Suchen des Benutzer unter Missachtung von Groß- und Kleinschreibung
         var benutzer = _benutzer.Find(b => b.Name.Equals(spielername, StringComparison.OrdinalIgnoreCase));
@@ -76,14 +76,14 @@ public class WettManager()
         // Ausschluss des Kontoüberzugs ;-)
         if (benutzer.Guthaben < einsatz)
         {
-            Console.WriteLine($"Fehler: Es ist kein ausreichendes Kontingent vorhanden - {spielerName} hat nur {benutzer.Guthaben} €.");
+            Console.WriteLine($"Fehler: Es ist kein ausreichendes Kontingent vorhanden - {spielername} hat nur {benutzer.Guthaben} €.");
             return;
         }
 
         // Abzug der Wette vom Guthaben (mittels Update-Methode) und Registrierung der Wette
         benutzer.UpdateGuthaben(-einsatz);
         _wetten.Add(new Wette (wetttyp, quote, einsatz, benutzer, spielId));
-        Console.WriteLine($"Wette platziert: {spielerName} setzt {einsatz} € auf '{wetttyp}' (Quote: {quote}). Restguthaben: {benutzer.Guthaben} €")
+        Console.WriteLine($"Wette platziert: {spielername} setzt {einsatz} € auf '{wetttyp}' (Quote: {quote}). Restguthaben: {benutzer.Guthaben} €");
     }
 
     public static void WerteWetteAus(int spielId, string ergebnis)
@@ -95,6 +95,7 @@ public class WettManager()
         var tore = ergebnis.Split(':');
         // TODO: Vereinfachung
         if (tore.Length != 2 || !int.TryParse(tore[0], out int heimTore) || !int.TryParse(tore[1], out int auswaertsTore))
+            return;
 
         foreach(var wette in offeneWetten)
         {
@@ -103,12 +104,25 @@ public class WettManager()
             if(b == null) continue;
 
             // Siegwette <=> Heimteam gewinnt (als Vereinfachung)
-            bool hatGewonnen = wette.Typ.Equals("Siegwette", StringComparison.OrdinalIgnoreCase && heimTore > auswaertsTore);
+            bool hatGewonnen = wette.Typ.Equals("Siegwette", StringComparison.OrdinalIgnoreCase) && heimTore > auswaertsTore;
+            if (hatGewonnen)
+            {
+                double gewinn = wette.Einsatz * wette.Quote;
+                b.UpdateGuthaben(gewinn);
+                wette.Benutzer.Guthaben = b.Guthaben; // Aktualisieren des neuen Guthabens auch im Wett-Objekt
+                Console.Write($"Herzlichen Glückwunsch! Spieler {b.Name} gewinnt {gewinn} €! Sein neues Guthaben beträgt damit {b.Guthaben} €.");
+            }
+            else
+            {
+                Console.Write($"Schade, leider verloren. Spieler {b.Name} verliert {wette.Einsatz} €.");
+            }
         }
-
-        
-
     }
+    
+    public static List<Wette> ExportiereWetten() => _wetten;
+    public static void ImportiereWetten(List<Wette> geladeneWetten) => _wetten = geladeneWetten ?? new();
+    public static List<Benutzer> ExportiereBenutzer() => _benutzer;
+    public static void ImportiereBenutzer(List<Benutzer> geladeneBenutzer) => _benutzer = geladeneBenutzer ?? new();
 }
 
 public class Benutzer(string name, double guthaben)
@@ -121,4 +135,3 @@ public class Benutzer(string name, double guthaben)
         Guthaben += betrag;
     }
 }
-
