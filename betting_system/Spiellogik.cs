@@ -104,9 +104,7 @@ public class Spiel
     public string Ergebnis { get; set; }
     public List<Wettquote> Quoten { get; set; } = new();
 
-    // Parameterloser Konstruktor für den Serializer
     public Spiel() { }
-
     // Konstruktor für die manuelle Erstellung mittels new aus den Startdaten heraus
     public Spiel(int spielId, DateTime datum, TimeSpan uhrzeit, Mannschaft heim, Mannschaft auswaerts)
     {

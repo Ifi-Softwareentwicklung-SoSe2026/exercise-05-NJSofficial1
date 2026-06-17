@@ -17,6 +17,7 @@ if (args.Length == 0)
     Print();
     string[] testBidArgs1 = { "bid", "Julian Nagelsmann", "1", "Siegwette", "3000000.0" };
     bid(testBidArgs1);
+    
     string[] testBidArgs2 = { "bid", "Manuel Neuer", "1", "Siegwette", "1" };
     bid(testBidArgs2);
     
